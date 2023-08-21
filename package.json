@@ -1,0 +1,20 @@
+{
+  "type": "module",
+  "version": "1.0.0",
+  "description": "maple node api",
+  "scripts": {
+    "start": "pm2 start ecosystem.config.cjs",
+    "dev": "nodemon server.js"
+  },
+  "dependencies": {
+    "@fastify/cors": "^8.1.0",
+    "@fastify/formbody": "^7.4.0",
+    "@fastify/multipart": "^7.4.0",
+    "@slack/webhook": "^6.1.0",
+    "axios": "^1.4.0",
+    "cheerio": "^1.0.0-rc.12",
+    "fastify": "^4.5.3",
+    "fastify-plugin": "^4.2.1",
+    "nodemon": "^2.0.20"
+  }
+}
