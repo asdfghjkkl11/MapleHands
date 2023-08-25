@@ -5,18 +5,26 @@ import * as cheerio from 'cheerio';
 export async function maple (fastify, options) {
     fastify.post('/maple/getCharacter', async function (req, reply) {
         const ID = req.body.ID;
-        const characterToken = await getToken(ID);
-        const equipment = await getEquipment(ID, characterToken);
-        const character = await getCharacter(ID, characterToken);
+        try {
+            const characterToken = await getToken(ID);
+            const equipment = await getEquipment(ID, characterToken);
+            const character = await getCharacter(ID, characterToken);
 
-        let data = Object.assign({},character);
-        data = Object.assign(data,equipment);
+            let data = Object.assign({},character);
+            data = Object.assign(data,equipment);
 
-        return {
-            resultCode: "success",
-            data: data
-        };
-
+            return {
+                resultCode: "success",
+                data: data
+            };
+        }catch (e){
+            return {
+                resultCode: "fail",
+                data: {
+                    error: e
+                }
+            };
+        }
     });
 }
 
