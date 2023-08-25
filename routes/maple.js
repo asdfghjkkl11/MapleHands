@@ -21,13 +21,23 @@ export async function maple (fastify, options) {
 }
 
 async function getToken(ID){
-    const html = await axios.get(URL_RANK + ID);
-    const replaceHtml = html.data.replaceAll("\r","").replaceAll("\n","");
-    const $ = cheerio.load(replaceHtml, null, false);
+    let world = 0;
+    let html = await axios.get(`${URL_RANK}w=${world}&c=${ID}`);
+    let replaceHtml = html.data.replaceAll("\r","").replaceAll("\n","");
+    let $ = cheerio.load(replaceHtml, null, false);
 
     let rankData = $(".rank_table tbody tr");
-    let characterToken = "";
 
+    if(rankData.length === 0){
+        world = 254;
+        html = await axios.get(`${URL_RANK}w=${world}&c=${ID}`);
+        replaceHtml = html.data.replaceAll("\r","").replaceAll("\n","");
+        $ = cheerio.load(replaceHtml, null, false);
+
+        rankData = $(".rank_table tbody tr");
+    }
+
+    let characterToken = "";
     for(let i = 0; i < rankData.length; i++){
         let id = $(rankData[i]).find("dt").text();
         if(id === ID){
