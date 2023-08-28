@@ -1,4 +1,4 @@
-import {URL_EQUIPMENT, URL_RANK, URL_ITEM, URL_CHARACTER} from "../config.js";
+import {URL_EQUIPMENT, URL_RANK, URL_ITEM, URL_CHARACTER} from "../js/config.js";
 import axios from "axios";
 import * as cheerio from 'cheerio';
 

@@ -3,7 +3,7 @@ const fastify = Fastify({
   logger: true,
   bodyLimit: 104857600
 })
-import {SERVER_PORT} from './config.js';
+import {SERVER_PORT} from './js/config.js';
 import fastify_formbody from '@fastify/formbody';
 import fastify_multipart from '@fastify/multipart';
 import fastify_cors from '@fastify/cors';
