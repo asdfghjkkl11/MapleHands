@@ -1,7 +1,7 @@
 import {URL_EQUIPMENT, URL_RANK, URL_ITEM, URL_CHARACTER} from "../js/config.js";
 import axios from "axios";
 import * as cheerio from 'cheerio';
-import {sleep} from "../js/common.js";
+import {get, sleep} from "../js/common.js";
 
 export async function maple (fastify, options) {
     fastify.post('/maple/getCharacter', async function (req, reply) {
@@ -31,7 +31,7 @@ export async function maple (fastify, options) {
 
 async function getToken(ID){
     let world = 0;
-    let html = await axios.get(`${URL_RANK}w=${world}&c=${ID}`);
+    let html = await get(`${URL_RANK}w=${world}&c=${ID}`);
     let replaceHtml = html.data.replaceAll("\r","").replaceAll("\n","");
     let $ = cheerio.load(replaceHtml, null, false);
 
@@ -39,7 +39,7 @@ async function getToken(ID){
 
     if(rankData.length === 0){
         world = 254;
-        html = await axios.get(`${URL_RANK}w=${world}&c=${ID}`);
+        html = await get(`${URL_RANK}w=${world}&c=${ID}`);
         replaceHtml = html.data.replaceAll("\r","").replaceAll("\n","");
         $ = cheerio.load(replaceHtml, null, false);
 
@@ -60,7 +60,7 @@ async function getToken(ID){
 
 async function getEquipment(ID, characterToken){
     let url = URL_EQUIPMENT.replace("{ID}",ID);
-    const html = await axios.get(url + characterToken);
+    const html = await get(url + characterToken);
     const replaceHtml = html.data.replaceAll("\r","").replaceAll("\n","");
     const $ = cheerio.load(replaceHtml, null, false);
 
@@ -95,20 +95,7 @@ async function getEquipment(ID, characterToken){
 }
 
 async function getItem(itemToken){
-    let html;
-    try{
-        html = await axios.get(URL_ITEM + itemToken,{
-            headers:{
-                "X-Requested-With": "XMLHttpRequest"
-            }
-        });
-    }catch (e){
-        html = await axios.get(URL_ITEM + itemToken,{
-            headers:{
-                "X-Requested-With": "XMLHttpRequest"
-            }
-        });
-    }
+    let html = await get(URL_ITEM + itemToken);
     const replaceHtml = html.data.view.replaceAll("\r","").replaceAll("\n","");
     const $ = cheerio.load(replaceHtml, null, false);
 
@@ -172,7 +159,7 @@ async function getItem(itemToken){
 
 async function getCharacter(ID, characterToken){
     let url = URL_CHARACTER.replace("{ID}",ID);
-    const html = await axios.get(url + characterToken);
+    const html = await get(url + characterToken);
     const replaceHtml = html.data.replaceAll("\r","").replaceAll("\n","");
     const $ = cheerio.load(replaceHtml, null, false);
 
