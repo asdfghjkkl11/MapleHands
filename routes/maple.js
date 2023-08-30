@@ -13,7 +13,8 @@ export async function maple (fastify, options) {
 
             let data = Object.assign({},character);
             data = Object.assign(data,equipment);
-
+            console.log(character)
+            console.log(equipment)
             return {
                 resultCode: "success",
                 data: data
@@ -34,9 +35,9 @@ async function getToken(ID){
     let html = await get(`${URL_RANK}w=${world}&c=${ID}`);
     let replaceHtml = html.data.replaceAll("\r","").replaceAll("\n","");
     let $ = cheerio.load(replaceHtml, null, false);
-
     let rankData = $(".rank_table tbody tr");
 
+    //리부트
     if(rankData.length === 0){
         world = 254;
         html = await get(`${URL_RANK}w=${world}&c=${ID}`);
@@ -44,6 +45,14 @@ async function getToken(ID){
         $ = cheerio.load(replaceHtml, null, false);
 
         rankData = $(".rank_table tbody tr");
+    }
+
+    //점검
+    if(rankData.length === 0){
+        let desc = $(".description").text();
+        if(desc.includes("점검중")){
+            throw "메이플스토리 사이트 점검중";
+        }
     }
 
     let characterToken = "";
@@ -191,6 +200,15 @@ async function getCharacter(ID, characterToken){
             let contents = $(characterStet[i+1]).contents();
             for(let j = 0; j < contents.length; j += 2){
                 value.push(contents[j]?.data);
+            }
+            if(key.includes("어빌리티")){
+                let str = key.split(" ");
+                console.log(str)
+                key = "어빌리티";
+                value = {
+                    grade: str[0],
+                    value: value
+                }
             }
         }
         returnData.character[key] = value;
