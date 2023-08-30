@@ -1,6 +1,7 @@
 import {URL_EQUIPMENT, URL_RANK, URL_ITEM, URL_CHARACTER} from "../js/config.js";
 import axios from "axios";
 import * as cheerio from 'cheerio';
+import {sleep} from "../js/common.js";
 
 export async function maple (fastify, options) {
     fastify.post('/maple/getCharacter', async function (req, reply) {
@@ -94,11 +95,20 @@ async function getEquipment(ID, characterToken){
 }
 
 async function getItem(itemToken){
-    const html = await axios.get(URL_ITEM + itemToken,{
-        headers:{
-            "X-Requested-With": "XMLHttpRequest"
-        }
-    });
+    let html;
+    try{
+        html = await axios.get(URL_ITEM + itemToken,{
+            headers:{
+                "X-Requested-With": "XMLHttpRequest"
+            }
+        });
+    }catch (e){
+        html = await axios.get(URL_ITEM + itemToken,{
+            headers:{
+                "X-Requested-With": "XMLHttpRequest"
+            }
+        });
+    }
     const replaceHtml = html.data.view.replaceAll("\r","").replaceAll("\n","");
     const $ = cheerio.load(replaceHtml, null, false);
 
