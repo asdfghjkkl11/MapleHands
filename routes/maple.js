@@ -148,7 +148,11 @@ async function getItem(itemToken){
                 grade: grade,
                 option: [option1, option2, option3]
             };
-        }else if(th.includes("소울옵션")){
+        }else if(th.includes("소울옵션") || th.includes("기타")){
+            td = $(stet[i]).find(".point_td").html().split("<br>");
+            for(let j = 0; j < td.length; j++){
+                td[j] = td[j].replace(/(<([^>]+)>)/ig,"");
+            }
         }else if(th.includes("등급")){
             td = td.split(" : ")[1];
         }else if(th.includes("착용 레벨 감소")){
