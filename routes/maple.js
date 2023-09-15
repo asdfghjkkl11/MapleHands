@@ -1,7 +1,7 @@
 import {URL_EQUIPMENT, URL_RANK, URL_ITEM, URL_CHARACTER} from "../js/config.js";
 import axios from "axios";
 import * as cheerio from 'cheerio';
-import {get, sleep} from "../js/common.js";
+import {comma, get, sleep} from "../js/common.js";
 
 export async function maple (fastify, options) {
     fastify.post('/maple/getCharacter', async function (req, reply) {
@@ -197,7 +197,9 @@ async function getCharacter(ID, characterToken){
     for(let i = 0; i < characterStet.length; i+=2){
         let key = $(characterStet[i]).text();
         let value = $(characterStet[i+1]).text();
-        if(key.includes("스탯공격력")){
+        if(key.includes("STR")){
+            value = comma(value);
+        }else if(key.includes("스탯공격력")){
             value = value.split(" ~ ");
         }else if(key.includes("어빌리티") || key.includes("하이퍼스탯")){
             value = [];

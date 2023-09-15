@@ -20,3 +20,12 @@ export async function get(url){
 
     return html;
 }
+export function g_nvl(text, rText) {
+    if (text == null || text == undefined) text = "";
+    if (rText != null && text == "") text = rText;
+    return text;
+}
+export function comma(str) {
+    str = String(Number(String(g_nvl(str, "0")).replace(/[^0-9-]/g,"")));
+    return str.replace(/(\d)(?=(?:\d{3})+(?!\d))/g, "$1,");
+}
