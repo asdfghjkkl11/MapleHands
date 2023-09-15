@@ -116,7 +116,7 @@ async function getItem(itemToken){
     let itemAbility = $(".item_ability");
     let itemLevel = $(itemAbility.find(".ablilty01 li em")[0]).text();
     let itemType = $(itemAbility.find(".ablilty02 .job_name")[1]).find("em").text().trim();
-
+    let seed = "";
     let stetInfo = $(".stet_info");
     let stet = stetInfo.find("li");
 
@@ -126,7 +126,8 @@ async function getItem(itemToken){
         level: itemLevel,
         starforce: itemNameEM,
         soul: itemNameFont,
-        itemType: itemType
+        itemType: itemType,
+        seed: seed
     }
 
     for(let i = 0; i < stet.length; i++){
@@ -139,19 +140,26 @@ async function getItem(itemToken){
             }else{
                 th = "잠재옵션";
             }
+
             let grade = $(stet[i]).find(".stet_th font").text();
             let contents = $(stet[i]).find(".point_td").contents();
             let option1 = (contents[0]?.data)?contents[0]?.data.split(" : "):"";
             let option2 = (contents[2]?.data)?contents[2]?.data.split(" : "):"";
             let option3 = (contents[4]?.data)?contents[4]?.data.split(" : "):"";
+
             td = {
                 grade: grade,
                 option: [option1, option2, option3]
             };
         }else if(th.includes("소울옵션") || th.includes("기타")){
             td = $(stet[i]).find(".point_td").html().split("<br>");
-            for(let j = 0; j < td.length; j++){
-                td[j] = td[j].replace(/(<([^>]+)>)/ig,"");
+
+            for(let j = 0; j < td.length; j++) {
+                td[j] = td[j].replace(/(<([^>]+)>)/ig, "");
+
+                if(td[j].includes("[특수 스킬 반지]")){
+                    res.seed = td[j][td[j].search(/\d레벨/g)];
+                }
             }
         }else if(th.includes("등급")){
             td = td.split(" : ")[1];
