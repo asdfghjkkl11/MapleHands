@@ -38,6 +38,7 @@ export async function maple (fastify, options) {
 async function getToken(ID){
     let world = 0;
     let html = await get(`${URL_RANK}w=${world}&c=${ID}`);
+    console.log(html)
     let replaceHtml = html.data.replaceAll("\r","").replaceAll("\n","");
     let $ = cheerio.load(replaceHtml, null, false);
     let rankData = $(".rank_table tbody tr");
@@ -75,6 +76,7 @@ async function getToken(ID){
 async function getEquipment(ID, characterToken){
     let url = URL_EQUIPMENT.replace("{ID}",ID);
     const html = await get(url + characterToken);
+    console.log(html)
     const replaceHtml = html.data.replaceAll("\r","").replaceAll("\n","");
     const $ = cheerio.load(replaceHtml, null, false);
 
@@ -110,6 +112,7 @@ async function getEquipment(ID, characterToken){
 
 async function getItem(itemToken){
     let html = await get(URL_ITEM + itemToken);
+    console.log(html)
     const replaceHtml = html.data.view.replaceAll("\r","").replaceAll("\n","");
     const $ = cheerio.load(replaceHtml, null, false);
 
