@@ -7,15 +7,19 @@ export async function maple (fastify, options) {
     fastify.post('/maple/getCharacter', async function (req, reply) {
         const ID = req.body.ID;
         try {
+            console.log(1)
             const characterToken = await getToken(ID);
+            console.log(2)
             const equipment = await getEquipment(ID, characterToken);
+            console.log(3)
             const character = await getCharacter(ID, characterToken);
+            console.log(4)
 
             let data = Object.assign({},character);
             data = Object.assign(data,equipment);
 
-            // console.log(character)
-            // console.log(equipment)
+            console.log(character)
+            console.log(equipment)
             return {
                 resultCode: "success",
                 data: data
