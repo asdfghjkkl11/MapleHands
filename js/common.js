@@ -11,6 +11,7 @@ export async function get(url){
             }
         });
     }catch (e){
+        console.log(e)
         html = await axios.get(url,{
             headers:{
                 "X-Requested-With": "XMLHttpRequest"
