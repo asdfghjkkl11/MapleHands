@@ -37,6 +37,7 @@ export async function maple (fastify, options) {
 
 async function getToken(ID){
     let world = 0;
+    console.log(`${URL_RANK}w=${world}&c=${ID}`)
     let html = await get(`${URL_RANK}w=${world}&c=${ID}`);
     console.log(html)
     let replaceHtml = html.data.replaceAll("\r","").replaceAll("\n","");
@@ -75,6 +76,7 @@ async function getToken(ID){
 
 async function getEquipment(ID, characterToken){
     let url = URL_EQUIPMENT.replace("{ID}",ID);
+    console.log(url + characterToken)
     const html = await get(url + characterToken);
     console.log(html)
     const replaceHtml = html.data.replaceAll("\r","").replaceAll("\n","");
@@ -111,6 +113,7 @@ async function getEquipment(ID, characterToken){
 }
 
 async function getItem(itemToken){
+    console.log(URL_ITEM + itemToken)
     let html = await get(URL_ITEM + itemToken);
     console.log(html)
     const replaceHtml = html.data.view.replaceAll("\r","").replaceAll("\n","");
