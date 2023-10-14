@@ -10,12 +10,12 @@ import fastify_cors from '@fastify/cors';
 
 import {maple} from './routes/maple.js';
 
-fastify.register(maple);
-
 // 맨 마지막에 실행.
 fastify.register(fastify_multipart, { attachFieldsToBody: true });
 fastify.register(fastify_formbody);
 fastify.register(fastify_cors,{ origin:true });
+
+fastify.register(maple);
 
 // Declare a route
 fastify.get('/', async (request, reply) => {

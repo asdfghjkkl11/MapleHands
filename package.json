@@ -7,7 +7,7 @@
     "dev": "nodemon server.js"
   },
   "dependencies": {
-    "@fastify/cors": "^8.1.0",
+    "@fastify/cors": "^8.4.0",
     "@fastify/formbody": "^7.4.0",
     "@fastify/multipart": "^7.4.0",
     "@slack/webhook": "^6.1.0",
