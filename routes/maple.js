@@ -13,8 +13,9 @@ export async function maple (fastify, options) {
 
             let data = Object.assign({},character);
             data = Object.assign(data,equipment);
-            console.log(character)
-            console.log(equipment)
+
+            // console.log(character)
+            // console.log(equipment)
             return {
                 resultCode: "success",
                 data: data
