@@ -38,6 +38,10 @@ export async function maple (fastify, options) {
             "hexamatrix-stat",
             "dojang"
         ]
+        let union_api_list = [
+            "union",
+            "union-raider"
+        ]
         let result = {};
 
         for(let i = 0; i < api_list.length; i++){
@@ -52,8 +56,21 @@ export async function maple (fastify, options) {
             result[api_list[i]] = api;
         }
 
+        for(let i = 0; i < union_api_list.length; i++){
+
+            let api = await(await axios.get(`${serverUrl}/v1/user/${union_api_list[i]}?ocid=${ocid}&date=${date}`,{
+                headers:{
+                    "accept": "application/json",
+                    "x-nxopen-api-key": apikey
+                }
+            })).data;
+
+            result[api_list[i]] = api;
+        }
+
         return result;
     });
+
     fastify.post('/maple/getCharacter', async function (req, reply) {
         const ID = req.body.ID;
         try {
