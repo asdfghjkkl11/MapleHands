@@ -17,7 +17,7 @@ dist-ssr
 coverage
 *.local
 package-lock.json
-
+key.js
 /cypress/videos/
 /cypress/screenshots/
 
