@@ -10,65 +10,71 @@ export async function maple (fastify, options) {
         const ID = req.body.ID;
         const date = dayjs().subtract(1,"day").format("YYYY-MM-DD");
 
-        let ocid = await(await axios.get(`${serverUrl}/v1/id?character_name=${ID}`,{
-            headers:{
-                "accept": "application/json",
-                "x-nxopen-api-key": apikey
+        try {
+            let ocid = await(await axios.get(`${serverUrl}/v1/id?character_name=${ID}`,{
+                headers:{
+                    "accept": "application/json",
+                    "x-nxopen-api-key": apikey
+                }
+            })).data.ocid;
+
+            let api_list = [
+                "basic",
+                "popularity",
+                "stat",
+                "hyper-stat",
+                "propensity",
+                "ability",
+                "item-equipment",
+                "cashitem-equipment",
+                "symbol-equipment",
+                "set-effect",
+                "beauty-equipment",
+                "android-equipment",
+                "pet-equipment",
+                // "skill",
+                "link-skill",
+                "vmatrix",
+                "hexamatrix",
+                "hexamatrix-stat",
+                "dojang"
+            ]
+            let union_api_list = [
+                "union",
+                "union-raider"
+            ]
+            let result = {};
+
+            for(let i = 0; i < api_list.length; i++){
+
+                let api = await(await axios.get(`${serverUrl}/v1/character/${api_list[i]}?ocid=${ocid}&date=${date}`,{
+                    headers:{
+                        "accept": "application/json",
+                        "x-nxopen-api-key": apikey
+                    }
+                }));
+                console.log(api)
+                result[api_list[i]] = api.data;
             }
-        })).data.ocid;
 
-        let api_list = [
-            "basic",
-            "popularity",
-            "stat",
-            "hyper-stat",
-            "propensity",
-            "ability",
-            "item-equipment",
-            "cashitem-equipment",
-            "symbol-equipment",
-            "set-effect",
-            "beauty-equipment",
-            "android-equipment",
-            "pet-equipment",
-            // "skill",
-            "link-skill",
-            "vmatrix",
-            "hexamatrix",
-            "hexamatrix-stat",
-            "dojang"
-        ]
-        let union_api_list = [
-            "union",
-            "union-raider"
-        ]
-        let result = {};
+            for(let i = 0; i < union_api_list.length; i++){
 
-        for(let i = 0; i < api_list.length; i++){
+                let api = await(await axios.get(`${serverUrl}/v1/user/${union_api_list[i]}?ocid=${ocid}&date=${date}`,{
+                    headers:{
+                        "accept": "application/json",
+                        "x-nxopen-api-key": apikey
+                    }
+                }));
 
-            let api = await(await axios.get(`${serverUrl}/v1/character/${api_list[i]}?ocid=${ocid}&date=${date}`,{
-                headers:{
-                    "accept": "application/json",
-                    "x-nxopen-api-key": apikey
-                }
-            })).data;
+                console.log(api)
+                result[union_api_list[i]] = api.data;
+            }
 
-            result[api_list[i]] = api;
+            return result;
+
+        }catch (e){
+            console.log(e)
         }
-
-        for(let i = 0; i < union_api_list.length; i++){
-
-            let api = await(await axios.get(`${serverUrl}/v1/user/${union_api_list[i]}?ocid=${ocid}&date=${date}`,{
-                headers:{
-                    "accept": "application/json",
-                    "x-nxopen-api-key": apikey
-                }
-            })).data;
-
-            result[union_api_list[i]] = api;
-        }
-
-        return result;
     });
 
     fastify.post('/maple/getCharacter', async function (req, reply) {
