@@ -2,8 +2,58 @@ import {URL_EQUIPMENT, URL_RANK, URL_ITEM, URL_CHARACTER} from "../js/config.js"
 import axios from "axios";
 import * as cheerio from 'cheerio';
 import {comma, get, sleep} from "../js/common.js";
-
+import {apikey} from "../key.js";
+import dayjs from "dayjs";
+const serverUrl = "https://open.api.nexon.com/maplestory";
 export async function maple (fastify, options) {
+    fastify.post('/maple/getInfo', async function (req, reply) {
+        const ID = req.body.ID;
+        const date = dayjs().subtract(1,"day").format("YYYY-MM-DD");
+
+        let ocid = await(await axios.get(`${serverUrl}/v1/id?character_name=${ID}`,{
+            headers:{
+                "accept": "application/json",
+                "x-nxopen-api-key": apikey
+            }
+        })).data.ocid;
+
+        let api_list = [
+            "basic",
+            "popularity",
+            "stat",
+            "hyper-stat",
+            "propensity",
+            "ability",
+            "item-equipment",
+            "cashitem-equipment",
+            "symbol-equipment",
+            "set-effect",
+            "beauty-equipment",
+            "android-equipment",
+            "pet-equipment",
+            // "skill",
+            "link-skill",
+            "vmatrix",
+            "hexamatrix",
+            "hexamatrix-stat",
+            "dojang"
+        ]
+        let result = {};
+
+        for(let i = 0; i < api_list.length; i++){
+
+            let api = await(await axios.get(`${serverUrl}/v1/character/${api_list[i]}?ocid=${ocid}&date=${date}`,{
+                headers:{
+                    "accept": "application/json",
+                    "x-nxopen-api-key": apikey
+                }
+            })).data;
+
+            result[api_list[i]] = api;
+        }
+
+        return result;
+    });
     fastify.post('/maple/getCharacter', async function (req, reply) {
         const ID = req.body.ID;
         try {
