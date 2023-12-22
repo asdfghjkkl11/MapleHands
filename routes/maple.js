@@ -65,7 +65,7 @@ export async function maple (fastify, options) {
                 }
             })).data;
 
-            result[api_list[i]] = api;
+            result[union_api_list[i]] = api;
         }
 
         return result;
