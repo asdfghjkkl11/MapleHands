@@ -18,7 +18,29 @@ export async function maple (fastify, options) {
                 }
             })).data.ocid;
 
-            let api_list = [
+            let url_list = [
+                `${serverUrl}/v1/character/basic?ocid=${ocid}&date=${date}`,
+                `${serverUrl}/v1/character/popularity?ocid=${ocid}&date=${date}`,
+                `${serverUrl}/v1/character/stat?ocid=${ocid}&date=${date}`,
+                `${serverUrl}/v1/character/hyper-stat?ocid=${ocid}&date=${date}`,
+                `${serverUrl}/v1/character/propensity?ocid=${ocid}&date=${date}`,
+                `${serverUrl}/v1/character/ability?ocid=${ocid}&date=${date}`,
+                `${serverUrl}/v1/character/item-equipment?ocid=${ocid}&date=${date}`,
+                `${serverUrl}/v1/character/cashitem-equipment?ocid=${ocid}&date=${date}`,
+                `${serverUrl}/v1/character/symbol-equipment?ocid=${ocid}&date=${date}`,
+                `${serverUrl}/v1/character/set-effect?ocid=${ocid}&date=${date}`,
+                `${serverUrl}/v1/character/beauty-equipment?ocid=${ocid}&date=${date}`,
+                `${serverUrl}/v1/character/android-equipment?ocid=${ocid}&date=${date}`,
+                `${serverUrl}/v1/character/pet-equipment?ocid=${ocid}&date=${date}`,
+                `${serverUrl}/v1/character/link-skill?ocid=${ocid}&date=${date}`,
+                `${serverUrl}/v1/character/skill?ocid=${ocid}&date=${date}&character_skill_grade=5`,
+                `${serverUrl}/v1/character/skill?ocid=${ocid}&date=${date}&character_skill_grade=6`,
+                `${serverUrl}/v1/character/hexamatrix-stat?ocid=${ocid}&date=${date}`,
+                `${serverUrl}/v1/character/dojang?ocid=${ocid}&date=${date}`,
+                `${serverUrl}/v1/user/union?ocid=${ocid}&date=${date}`,
+                `${serverUrl}/v1/user/union-raider?ocid=${ocid}&date=${date}`,
+            ]
+            let key_list = [
                 "basic",
                 "popularity",
                 "stat",
@@ -32,46 +54,34 @@ export async function maple (fastify, options) {
                 "beauty-equipment",
                 "android-equipment",
                 "pet-equipment",
-                // "skill",
                 "link-skill",
                 "vmatrix",
                 "hexamatrix",
                 "hexamatrix-stat",
-                "dojang"
-            ]
-            let union_api_list = [
+                "dojang",
                 "union",
                 "union-raider"
             ]
             let result = {};
+            let promise_list = [];
 
-            for(let i = 0; i < api_list.length; i++){
-
-                let api = await(await axios.get(`${serverUrl}/v1/character/${api_list[i]}?ocid=${ocid}&date=${date}`,{
+            for(let i = 0; i < url_list.length; i++){
+                promise_list.push(axios.get(`${url_list[i]}`,{
                     headers:{
                         "accept": "application/json",
                         "x-nxopen-api-key": apikey
                     }
-                }));
-                console.log(api)
-                result[api_list[i]] = api.data;
+                }).then(res => res.data));
+            }
+            let res = await Promise.all(promise_list);
+
+            for(let i = 0; i < res.length; i++){
+                result[key_list[i]] = res[i];
             }
 
-            for(let i = 0; i < union_api_list.length; i++){
-
-                let api = await(await axios.get(`${serverUrl}/v1/user/${union_api_list[i]}?ocid=${ocid}&date=${date}`,{
-                    headers:{
-                        "accept": "application/json",
-                        "x-nxopen-api-key": apikey
-                    }
-                }));
-
-                console.log(api)
-                result[union_api_list[i]] = api.data;
-            }
+            console.log(result)
 
             return result;
-
         }catch (e){
             console.log(e)
         }
