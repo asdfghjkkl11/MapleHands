@@ -2,6 +2,8 @@ import axios from "axios";
 import {nvl} from "../js/common.js";
 import {apikey} from "../key.js";
 import dayjs from "dayjs";
+import pkg from 'file-api';
+const {FileReader} = pkg;
 
 const serverUrl = "https://open.api.nexon.com/maplestory";
 
@@ -88,4 +90,14 @@ export async function maple (fastify, options) {
         }
     });
 
+    fastify.post('/maple/getUrl', async function (req, reply) {
+        const url = req.body.url;
+        let blob = await axios.get(url, {
+            responseType: 'arraybuffer',
+        });
+
+        let contentType = `image/png`;
+        let buffer = Buffer.from(blob.data);
+        return "data:" + contentType + ';base64,' + buffer.toString('base64');
+    });
 }
