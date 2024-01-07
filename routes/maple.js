@@ -2,9 +2,6 @@ import axios from "axios";
 import {nvl} from "../js/common.js";
 import {apikey} from "../key.js";
 import dayjs from "dayjs";
-import pkg from 'file-api';
-const {FileReader} = pkg;
-
 const serverUrl = "https://open.api.nexon.com/maplestory";
 
 export async function maple (fastify, options) {
