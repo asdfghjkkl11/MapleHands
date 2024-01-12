@@ -8,7 +8,7 @@ export async function maple (fastify, options) {
     fastify.post('/maple/getInfo', async function (req, reply) {
         const ID = req.body.ID;
         const date = req.body.date;
-        let search_date = nvl(date,dayjs().subtract(1,"day").format("YYYY-MM-DD"));
+        let search_date = nvl(date,dayjs().subtract(1,"day").subtract(1,"hour").format("YYYY-MM-DD"));
 
         try {
             let ocid = await(await axios.get(`${serverUrl}/v1/id?character_name=${ID}`,{
