@@ -39,6 +39,7 @@ export async function maple (fastify, options) {
                 `${serverUrl}/v1/character/dojang?ocid=${ocid}&date=${search_date}`,
                 `${serverUrl}/v1/user/union?ocid=${ocid}&date=${search_date}`,
                 `${serverUrl}/v1/user/union-raider?ocid=${ocid}&date=${search_date}`,
+                `${serverUrl}/v1/user/union-artifact?ocid=${ocid}&date=${search_date}`,
             ]
             let key_list = [
                 "basic",
@@ -60,7 +61,8 @@ export async function maple (fastify, options) {
                 "hexamatrix-stat",
                 "dojang",
                 "union",
-                "union-raider"
+                "union-raider",
+                "union-artifact"
             ]
             let result = {};
             let promise_list = [];
