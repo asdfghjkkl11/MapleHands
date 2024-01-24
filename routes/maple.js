@@ -1,8 +1,9 @@
 import axios from "axios";
 import {nvl} from "../js/common.js";
-import {apikey} from "../key.js";
+import {mapleApikey,mapleMApikey} from "../key.js";
 import dayjs from "dayjs";
 const serverUrl = "https://open.api.nexon.com/maplestory";
+const serverUrlM = "https://open.api.nexon.com/maplestorym";
 
 export async function maple (fastify, options) {
     fastify.post('/maple/getInfo', async function (req, reply) {
@@ -14,7 +15,7 @@ export async function maple (fastify, options) {
             let ocid = await(await axios.get(`${serverUrl}/v1/id?character_name=${ID}`,{
                 headers:{
                     "accept": "application/json",
-                    "x-nxopen-api-key": apikey
+                    "x-nxopen-api-key": mapleApikey
                 }
             })).data.ocid;
 
@@ -71,7 +72,55 @@ export async function maple (fastify, options) {
                 promise_list.push(axios.get(`${url_list[i]}`,{
                     headers:{
                         "accept": "application/json",
-                        "x-nxopen-api-key": apikey
+                        "x-nxopen-api-key": mapleApikey
+                    }
+                }).then(res => res.data));
+            }
+            let res = await Promise.all(promise_list);
+
+            for(let i = 0; i < res.length; i++){
+                result[key_list[i]] = res[i];
+            }
+
+            console.log(result)
+
+            return result;
+        }catch (e){
+            console.log(e)
+        }
+    });
+    fastify.post('/maple/mobile/getInfo', async function (req, reply) {
+        const ID = req.body.ID;
+        const server = req.body.server;
+
+        try {
+            let ocid = await(await axios.get(`${serverUrlM}/v1/id?character_name=${ID}&world_name=${server}`,{
+                headers:{
+                    "accept": "application/json",
+                    "x-nxopen-api-key": mapleMApikey
+                }
+            })).data.ocid;
+
+            let url_list = [
+                `${serverUrlM}/v1/character/basic?ocid=${ocid}`,
+                `${serverUrlM}/v1/character/item-equipment?ocid=${ocid}`,
+                `${serverUrlM}/v1/character/stat?ocid=${ocid}`,
+                `${serverUrlM}/v1/character/guild?ocid=${ocid}`,
+            ]
+            let key_list = [
+                "basic",
+                "item-equipment",
+                "stat",
+                "guild"
+            ]
+            let result = {};
+            let promise_list = [];
+
+            for(let i = 0; i < url_list.length; i++){
+                promise_list.push(axios.get(`${url_list[i]}`,{
+                    headers:{
+                        "accept": "application/json",
+                        "x-nxopen-api-key": mapleMApikey
                     }
                 }).then(res => res.data));
             }
