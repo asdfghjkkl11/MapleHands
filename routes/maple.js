@@ -82,8 +82,6 @@ export async function maple (fastify, options) {
                 result[key_list[i]] = res[i];
             }
 
-            console.log(result)
-
             return result;
         }catch (e){
             console.log(e)
@@ -130,7 +128,103 @@ export async function maple (fastify, options) {
                 result[key_list[i]] = res[i];
             }
 
-            console.log(result)
+            return result;
+        }catch (e){
+            console.log(e)
+        }
+    });
+    fastify.post('/maple/getGuildInfo', async function (req, reply) {
+        const guild = req.body.guild;
+        const server = req.body.server;
+        const date = req.body.date;
+        let search_date = nvl(date,dayjs().subtract(1,"day").subtract(1,"hour").format("YYYY-MM-DD"));
+
+        try {
+            let oguild_id = await (await axios.get(`${serverUrl}/v1/guild/id?guild_name=${guild}&world_name=${server}`, {
+                headers: {
+                    "accept": "application/json",
+                    "x-nxopen-api-key": mapleApikey
+                }
+            })).data.oguild_id;
+            let guild_data = await (await axios.get(`${serverUrl}/v1/guild/basic?oguild_id=${oguild_id}&date=${search_date}`, {
+                headers: {
+                    "accept": "application/json",
+                    "x-nxopen-api-key": mapleApikey
+                }
+            })).data;
+
+            let member_list = {};
+
+            if (guild_data.guild_member.length > 0){
+                let ocid_list = [];
+                let ocid_mapper = {};
+                for(let i = 0; i < guild_data.guild_member.length; i++){
+                    let ID = guild_data.guild_member[i];
+                    member_list[ID] = {}
+                    ocid_list.push(axios.get(`${serverUrl}/v1/id?character_name=${ID}`,{
+                        headers:{
+                            "accept": "application/json",
+                            "x-nxopen-api-key": mapleApikey
+                        }
+                    }).then(res =>{
+                        ocid_mapper[res.data.ocid] = ID;
+                        return res.data.ocid;
+                    }).catch(err=>""));
+                }
+                let ocid_res = await Promise.all(ocid_list);
+                console.log(ocid_mapper)
+
+                let promise_list = [];
+                for(let i = 0; i < ocid_res.length; i++){
+                    let ocid = ocid_res[i];
+                    if(ocid !== "") {
+                        let url_list = [
+                            `${serverUrl}/v1/character/basic?ocid=${ocid}&date=${search_date}`,
+                            `${serverUrl}/v1/character/stat?ocid=${ocid}&date=${search_date}`,
+                            `${serverUrl}/v1/character/dojang?ocid=${ocid}&date=${search_date}`,
+                            `${serverUrl}/v1/user/union?ocid=${ocid}&date=${search_date}`,
+                        ]
+                        let key_list = [
+                            "basic",
+                            "stat",
+                            "dojang",
+                            "union"
+                        ]
+                        for (let j = 0; j < url_list.length; j++) {
+                            promise_list.push(axios.get(`${url_list[j]}`, {
+                                headers: {
+                                    "accept": "application/json",
+                                    "x-nxopen-api-key": mapleApikey
+                                }
+                            }).then(res => {
+                                return {
+                                    ocid: ocid_mapper[ocid],
+                                    key: key_list[j],
+                                    data: res.data
+                                };
+                            }).catch(err=>{
+                                return "error";
+                            }));
+                        }
+                    }
+                }
+
+                let res = await Promise.all(promise_list);
+                for(let i = 0; i < res.length; i++){
+                    let r = res[i];
+                    if(r !== "error"){
+                        let ocid = r.ocid;
+                        let key = r.key;
+                        let data = r.data;
+                        member_list[ocid][key] = data;
+                    }
+                }
+            }
+
+            let result = {
+                guild: guild_data,
+                member_list: member_list
+            }
 
             return result;
         }catch (e){
