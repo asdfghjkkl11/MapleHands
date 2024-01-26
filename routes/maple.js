@@ -172,7 +172,6 @@ export async function maple (fastify, options) {
                     }).catch(err=>""));
                 }
                 let ocid_res = await Promise.all(ocid_list);
-                console.log(ocid_mapper)
 
                 let promise_list = [];
                 for(let i = 0; i < ocid_res.length; i++){
