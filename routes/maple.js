@@ -9,7 +9,8 @@ export async function maple (fastify, options) {
     fastify.post('/maple/getInfo', async function (req, reply) {
         const ID = req.body.ID;
         const date = req.body.date;
-        let search_date = nvl(date,dayjs().subtract(1,"day").subtract(1,"hour").format("YYYY-MM-DD"));
+        let search_date = nvl(date);
+        let query = (search_date === "")?``:`&date=${search_date}`;
 
         try {
             let ocid = await(await axios.get(`${serverUrl}/v1/id?character_name=${ID}`,{
@@ -20,27 +21,27 @@ export async function maple (fastify, options) {
             })).data.ocid;
 
             let url_list = [
-                `${serverUrl}/v1/character/basic?ocid=${ocid}&date=${search_date}`,
-                `${serverUrl}/v1/character/popularity?ocid=${ocid}&date=${search_date}`,
-                `${serverUrl}/v1/character/stat?ocid=${ocid}&date=${search_date}`,
-                `${serverUrl}/v1/character/hyper-stat?ocid=${ocid}&date=${search_date}`,
-                `${serverUrl}/v1/character/propensity?ocid=${ocid}&date=${search_date}`,
-                `${serverUrl}/v1/character/ability?ocid=${ocid}&date=${search_date}`,
-                `${serverUrl}/v1/character/item-equipment?ocid=${ocid}&date=${search_date}`,
-                `${serverUrl}/v1/character/cashitem-equipment?ocid=${ocid}&date=${search_date}`,
-                `${serverUrl}/v1/character/symbol-equipment?ocid=${ocid}&date=${search_date}`,
-                `${serverUrl}/v1/character/set-effect?ocid=${ocid}&date=${search_date}`,
-                `${serverUrl}/v1/character/beauty-equipment?ocid=${ocid}&date=${search_date}`,
-                `${serverUrl}/v1/character/android-equipment?ocid=${ocid}&date=${search_date}`,
-                `${serverUrl}/v1/character/pet-equipment?ocid=${ocid}&date=${search_date}`,
-                `${serverUrl}/v1/character/link-skill?ocid=${ocid}&date=${search_date}`,
-                `${serverUrl}/v1/character/skill?ocid=${ocid}&date=${search_date}&character_skill_grade=5`,
-                `${serverUrl}/v1/character/skill?ocid=${ocid}&date=${search_date}&character_skill_grade=6`,
-                `${serverUrl}/v1/character/hexamatrix-stat?ocid=${ocid}&date=${search_date}`,
-                `${serverUrl}/v1/character/dojang?ocid=${ocid}&date=${search_date}`,
-                `${serverUrl}/v1/user/union?ocid=${ocid}&date=${search_date}`,
-                `${serverUrl}/v1/user/union-raider?ocid=${ocid}&date=${search_date}`,
-                `${serverUrl}/v1/user/union-artifact?ocid=${ocid}&date=${search_date}`,
+                `${serverUrl}/v1/character/basic?ocid=${ocid}${query}`,
+                `${serverUrl}/v1/character/popularity?ocid=${ocid}${query}`,
+                `${serverUrl}/v1/character/stat?ocid=${ocid}${query}`,
+                `${serverUrl}/v1/character/hyper-stat?ocid=${ocid}${query}`,
+                `${serverUrl}/v1/character/propensity?ocid=${ocid}${query}`,
+                `${serverUrl}/v1/character/ability?ocid=${ocid}${query}`,
+                `${serverUrl}/v1/character/item-equipment?ocid=${ocid}${query}`,
+                `${serverUrl}/v1/character/cashitem-equipment?ocid=${ocid}${query}`,
+                `${serverUrl}/v1/character/symbol-equipment?ocid=${ocid}${query}`,
+                `${serverUrl}/v1/character/set-effect?ocid=${ocid}${query}`,
+                `${serverUrl}/v1/character/beauty-equipment?ocid=${ocid}${query}`,
+                `${serverUrl}/v1/character/android-equipment?ocid=${ocid}${query}`,
+                `${serverUrl}/v1/character/pet-equipment?ocid=${ocid}${query}`,
+                `${serverUrl}/v1/character/link-skill?ocid=${ocid}${query}`,
+                `${serverUrl}/v1/character/skill?ocid=${ocid}&character_skill_grade=5${query}`,
+                `${serverUrl}/v1/character/skill?ocid=${ocid}&character_skill_grade=6${query}`,
+                `${serverUrl}/v1/character/hexamatrix-stat?ocid=${ocid}${query}`,
+                `${serverUrl}/v1/character/dojang?ocid=${ocid}${query}`,
+                `${serverUrl}/v1/user/union?ocid=${ocid}${query}`,
+                `${serverUrl}/v1/user/union-raider?ocid=${ocid}${query}`,
+                `${serverUrl}/v1/user/union-artifact?ocid=${ocid}${query}`,
             ]
             let key_list = [
                 "basic",
@@ -137,7 +138,9 @@ export async function maple (fastify, options) {
         const guild = req.body.guild;
         const server = req.body.server;
         const date = req.body.date;
-        let search_date = nvl(date,dayjs().subtract(1,"day").subtract(1,"hour").format("YYYY-MM-DD"));
+
+        let search_date = nvl(date);
+        let query = (search_date === "")?``:`&date=${search_date}`;
 
         try {
             let oguild_id = await (await axios.get(`${serverUrl}/v1/guild/id?guild_name=${guild}&world_name=${server}`, {
@@ -146,7 +149,7 @@ export async function maple (fastify, options) {
                     "x-nxopen-api-key": mapleApikey
                 }
             })).data.oguild_id;
-            let guild_data = await (await axios.get(`${serverUrl}/v1/guild/basic?oguild_id=${oguild_id}&date=${search_date}`, {
+            let guild_data = await (await axios.get(`${serverUrl}/v1/guild/basic?oguild_id=${oguild_id}${query}`, {
                 headers: {
                     "accept": "application/json",
                     "x-nxopen-api-key": mapleApikey
@@ -178,10 +181,10 @@ export async function maple (fastify, options) {
                     let ocid = ocid_res[i];
                     if(ocid !== "") {
                         let url_list = [
-                            `${serverUrl}/v1/character/basic?ocid=${ocid}&date=${search_date}`,
-                            `${serverUrl}/v1/character/stat?ocid=${ocid}&date=${search_date}`,
-                            `${serverUrl}/v1/character/dojang?ocid=${ocid}&date=${search_date}`,
-                            `${serverUrl}/v1/user/union?ocid=${ocid}&date=${search_date}`,
+                            `${serverUrl}/v1/character/basic?ocid=${ocid}${query}`,
+                            `${serverUrl}/v1/character/stat?ocid=${ocid}${query}`,
+                            `${serverUrl}/v1/character/dojang?ocid=${ocid}${query}`,
+                            `${serverUrl}/v1/user/union?ocid=${ocid}${query}`,
                         ]
                         let key_list = [
                             "basic",
